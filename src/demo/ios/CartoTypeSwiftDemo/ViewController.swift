@@ -125,7 +125,7 @@ class ViewController: CartoTypeViewController, CartoTypeCreateRouteAsyncProtocol
     
     func createTurnInstructions()
         {
-        let turn_instr_legend = CartoTypeLegend(framework: m_framework, andStyle: CtLegendStyle.turn.rawValue)
+        let turn_instr_legend = CartoTypeLegend(framework: m_framework, style: .turn)
         turn_instr_legend?.setFontSize(12, unit: "pt")
         var width_inches = Double(view.bounds.size.width - 24) * m_ui_scale / m_framework.resolutionDpi
         if (width_inches > 2.5)
@@ -334,18 +334,18 @@ class ViewController: CartoTypeViewController, CartoTypeCreateRouteAsyncProtocol
             {
             m_find_text = aPlace
             m_search_bar.text = aPlace
-            var match_method = CtStringMatch.foldCaseFlag.rawValue | CtStringMatch.ignoreWhitespaceFlag.rawValue | CtStringMatch.foldAccentsFlag.rawValue
+            var match_method : CtStringMatch = [ .foldCaseFlag, .ignoreWhitespaceFlag, .foldAccentsFlag ]
             if (m_ignore_symbols)
                 {
-                match_method |= CtStringMatch.ignoreSymbolsFlag.rawValue
+                match_method.insert(.ignoreSymbolsFlag)
                 }
             if (m_fuzzy)
                 {
-                match_method |= CtStringMatch.fuzzyFlag.rawValue
+                match_method.insert(.fuzzyFlag)
                 }
             let find_param = CartoTypeFindParam()!
             find_param.text = aPlace
-            find_param.stringMatchMethod = CtStringMatch(rawValue: match_method)
+            find_param.stringMatchMethod = match_method;
             find_param.maxObjectCount = 20
             let map_object_array = NSMutableArray()
             m_framework.find(map_object_array, with: find_param)
@@ -715,8 +715,8 @@ class ViewController: CartoTypeViewController, CartoTypeCreateRouteAsyncProtocol
     @objc func insertPushPin()
         {
         let a = CartoTypeAddress()
-            m_framework.getAddress(a, point: m_last_point_pressed_in_degrees, coordType: CtCoordType.degree)
-            let p : CartoTypeMapObjectParam = CartoTypeMapObjectParam.init(type: CtMapObjectType.point, andLayer: "pushpin", andCoordType: CtCoordType.degree)
+        m_framework.getAddress(a, point: m_last_point_pressed_in_degrees, coordType: CtCoordType.degree)
+        let p : CartoTypeMapObjectParam = CartoTypeMapObjectParam.init(type: CtMapObjectType.point, andLayer: "pushpin", andCoordType: CtCoordType.degree)
         p.appendX(m_last_point_pressed_in_degrees.x, andY: m_last_point_pressed_in_degrees.y)
         p.mapHandle = 0
         p.stringAttrib = a.toString(false)
